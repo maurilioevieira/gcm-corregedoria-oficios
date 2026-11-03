@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0B2545">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Corregedoria · Controle de Ofícios · GCM Iguatu</title>
+
+  <link rel="icon" type="image/png" href="img/brasao.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+
+  <!-- ===================== TELA DE LOGIN (PIN) ===================== -->
+  <section id="tela-login" class="login" aria-labelledby="login-titulo">
+    <div class="login-caixa">
+      <div class="login-brasao">
+        <img src="img/brasao.png" alt="Brasão da GCM Iguatu" onerror="this.replaceWith(document.getElementById('modelo-escudo').content.cloneNode(true))">
+      </div>
+      <h1 id="login-titulo" class="login-titulo">CORREGEDORIA</h1>
+      <p class="login-subtitulo">GCM IGUATU · CONTROLE DE OFÍCIOS</p>
+
+      <p class="login-instrucao" id="login-instrucao">Digite seu PIN de 6 números</p>
+      <div class="pin-pontos" id="pin-pontos" role="img" aria-label="0 de 6 dígitos digitados">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <p class="login-erro" id="login-erro" role="alert"></p>
+
+      <div class="teclado" id="teclado">
+        <button type="button" data-tecla="1">1</button>
+        <button type="button" data-tecla="2">2</button>
+        <button type="button" data-tecla="3">3</button>
+        <button type="button" data-tecla="4">4</button>
+        <button type="button" data-tecla="5">5</button>
+        <button type="button" data-tecla="6">6</button>
+        <button type="button" data-tecla="7">7</button>
+        <button type="button" data-tecla="8">8</button>
+        <button type="button" data-tecla="9">9</button>
+        <button type="button" data-tecla="limpar" class="tecla-acao" aria-label="Limpar tudo">C</button>
+        <button type="button" data-tecla="0">0</button>
+        <button type="button" data-tecla="apagar" class="tecla-acao" aria-label="Apagar último dígito">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><path d="M18 9l-6 6"/><path d="M12 9l6 6"/></svg>
+        </button>
+      </div>
+
+      <p class="login-rodape">Acesso restrito · Secretaria de Segurança Pública de Iguatu</p>
+    </div>
+  </section>
+
+  <!-- ===================== APLICATIVO ===================== -->
+  <div id="app" class="app" hidden>
+
+    <!-- Barra lateral (computador) -->
+    <aside class="lateral" aria-label="Menu lateral">
+      <div class="marca">
+        <div class="marca-brasao">
+          <img src="img/brasao.png" alt="" onerror="this.replaceWith(document.getElementById('modelo-escudo').content.cloneNode(true))">
+        </div>
+        <div>
+          <div class="marca-nome">CORREGEDORIA</div>
+          <div class="marca-sub">GCM IGUATU · OFÍCIOS</div>
+        </div>
+      </div>
+
+      <nav class="menu" id="menu-lateral" aria-label="Menu principal"></nav>
+
+      <div class="usuario-caixa">
+        <div class="usuario-avatar" id="usuario-avatar">--</div>
+        <div class="usuario-info">
+          <div class="usuario-nome" id="usuario-nome">—</div>
+          <div class="usuario-cargo" id="usuario-cargo">—</div>
+        </div>
+        <button type="button" class="botao-icone" id="botao-conta" aria-label="Minha conta e trocar PIN" title="Minha conta">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </button>
+        <button type="button" class="botao-icone" id="botao-sair" aria-label="Sair do sistema" title="Sair">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Cabeçalho (celular) -->
+    <header class="topo-celular">
+      <div>
+        <div class="marca-sub">CORREGEDORIA · GCM</div>
+        <div class="topo-titulo" id="topo-titulo">Painel</div>
+      </div>
+      <div class="topo-acoes">
+        <button type="button" class="botao-icone claro" id="botao-conta-cel" aria-label="Minha conta e trocar PIN">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </button>
+        <button type="button" class="botao-icone claro" id="botao-sair-cel" aria-label="Sair do sistema">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Conteúdo da página atual -->
+    <main class="conteudo" id="conteudo" tabindex="-1"></main>
+
+    <!-- Menu inferior (celular) -->
+    <nav class="barra-inferior" id="menu-inferior" aria-label="Menu principal"></nav>
+  </div>
+
+  <!-- Janela "Minha conta / trocar PIN" -->
+  <dialog id="janela-conta" class="janela" aria-labelledby="janela-conta-titulo">
+    <form method="dialog" id="form-trocar-pin" class="janela-corpo">
+      <h2 id="janela-conta-titulo" class="janela-titulo">Minha conta</h2>
+      <p class="texto-suave" id="conta-resumo"></p>
+      <label class="campo">PIN atual
+        <input type="password" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="current-password" id="pin-atual" required>
+      </label>
+      <label class="campo">Novo PIN (6 números)
+        <input type="password" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="new-password" id="pin-novo" required>
+      </label>
+      <label class="campo">Repita o novo PIN
+        <input type="password" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="new-password" id="pin-repetir" required>
+      </label>
+      <div class="janela-botoes">
+        <button type="button" class="botao secundario" id="botao-fechar-conta">Cancelar</button>
+        <button type="submit" class="botao primario" id="botao-salvar-pin">Trocar PIN</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Avisos rápidos -->
+  <div id="avisos" class="avisos" aria-live="polite"></div>
+
+  <!-- Indicador de carregamento -->
+  <div id="carregando" class="carregando" hidden>
+    <div class="carregando-roda" aria-hidden="true"></div>
+    <span class="sr-only">Carregando…</span>
+  </div>
+
+  <!-- Escudo usado se o arquivo img/brasao.png não existir -->
+  <template id="modelo-escudo">
+    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="#C9A227" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.5 9.5-8 11-4.5-1.5-8-6-8-11V5l8-3z"/><path d="M9 12l2 2 4-4"/></svg>
+  </template>
+
+  <!-- Biblioteca oficial do Supabase (última versão da série 2) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
