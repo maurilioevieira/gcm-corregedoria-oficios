@@ -134,6 +134,16 @@ window.App = (function () {
   const CHAVE_SESSAO = 'corregedoria_sessao';
   const estado = { usuario: null };
 
+  // ===================== CADASTROS EM MEMÓRIA =====================
+  // As listas (origens, destinos...) mudam pouco. Guardamos na memória
+  // durante a sessão para não buscar de novo a cada página aberta.
+  // A tela Cadastros chama App.cadastros(true) após salvar, para atualizar.
+  let cacheCadastros = null;
+  async function cadastros(forcar) {
+    if (!cacheCadastros || forcar) cacheCadastros = await API.listarCadastros(false);
+    return cacheCadastros;
+  }
+
   function podeVer(rota) {
     const r = ROTAS[rota];
     return !!(r && estado.usuario && r.niveis.indexOf(estado.usuario.nivel) >= 0);
@@ -209,6 +219,7 @@ window.App = (function () {
 
   function sair(motivo) {
     estado.usuario = null;
+    cacheCadastros = null;
     API.limparPin();
     try { sessionStorage.removeItem(CHAVE_SESSAO); } catch (e) { /* ignora */ }
     clearTimeout(temporizadorInatividade);
@@ -434,6 +445,7 @@ window.App = (function () {
     registrarPagina: registrarPagina,
     navegar: navegar,
     usuario: function () { return estado.usuario; },
+    cadastros: cadastros,
     podeVer: podeVer,
     util: {
       $: $, esc: esc, dataBR: dataBR, dataCurtaBR: dataCurtaBR, dataHoraBR: dataHoraBR,
