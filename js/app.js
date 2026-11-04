@@ -446,6 +446,11 @@ window.App = (function () {
     navegar: navegar,
     usuario: function () { return estado.usuario; },
     cadastros: cadastros,
+    // Usado quando o admin troca o próprio PIN pela aba Usuários
+    atualizarPinSessao: function (pin) {
+      API.definirPin(pin);
+      try { sessionStorage.setItem(CHAVE_SESSAO, pin); } catch (e) { /* ignora */ }
+    },
     podeVer: podeVer,
     util: {
       $: $, esc: esc, dataBR: dataBR, dataCurtaBR: dataCurtaBR, dataHoraBR: dataHoraBR,

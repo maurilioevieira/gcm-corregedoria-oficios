@@ -577,6 +577,131 @@ a.card-assunto:hover { text-decoration: underline; }
 .resumo-arquivo .ok strong { color: var(--verde); }
 .resumo-arquivo .atraso strong { color: var(--vermelho); }
 
+/* ===================== CADASTROS ===================== */
+.cad-abas {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 20px;
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid var(--borda);
+  background: var(--branco);
+}
+.cad-aba {
+  min-height: 46px; padding: 0 18px;
+  border: 0; border-radius: 10px;
+  background: transparent;
+  font-size: 15px; font-weight: 600; color: var(--texto-medio);
+  cursor: pointer; white-space: nowrap;
+}
+.cad-aba:hover { background: #E6ECF3; }
+.cad-aba.ativa { background: var(--azul); color: var(--branco); }
+.cad-colunas { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+.cad-colunas > .cad-painel { flex: 1 1 400px; min-width: 0; margin-bottom: 0; }
+.cad-painel { display: flex; flex-direction: column; gap: 12px; }
+.cad-painel .cartao-titulo { margin: 0; }
+.cad-estreito { max-width: 820px; }
+.cad-sobretitulo { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--dourado-texto); margin-bottom: -10px; }
+.cad-adicionar { display: flex; flex-wrap: wrap; gap: 8px; }
+.cad-adicionar input {
+  flex: 1 1 220px; min-height: 46px;
+  border: 1px solid var(--borda-forte); border-radius: var(--raio-p);
+  padding: 0 14px; background: var(--campo); font-size: 15px;
+}
+.cad-adicionar input:focus { border-color: var(--azul); background: var(--branco); }
+.cad-adicionar .feriado-input-data { flex: 0 0 170px; }
+.cad-lista { display: flex; flex-direction: column; gap: 8px; }
+.cad-vazio { margin: 4px 0; color: var(--texto-suave); font-size: 14px; }
+.cad-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: var(--branco);
+}
+.cad-item.selecionado { border: 2px solid var(--azul); background: #EAF0F8; }
+.cad-item.desativado { background: var(--concluido-fundo); }
+.cad-item.desativado .cad-nome { color: var(--texto-suave); text-decoration: line-through; }
+.cad-ordem { display: flex; flex-direction: column; gap: 2px; }
+.cad-seta {
+  width: 30px; height: 21px;
+  border: 0; border-radius: 6px;
+  background: transparent; color: var(--azul);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.cad-seta:hover { background: #E6ECF3; }
+.cad-seta:disabled { opacity: 0.25; cursor: default; background: transparent; }
+.cad-nome { flex: 1; min-width: 0; font-weight: 600; color: var(--azul-escuro); word-break: break-word; }
+.cad-nome-botao {
+  text-align: left; border: 0; background: transparent; padding: 4px 0; cursor: pointer;
+  font: inherit; font-weight: 600; color: var(--azul-escuro);
+}
+.cad-nome-botao small { display: block; font-size: 12px; font-weight: 500; color: var(--texto-suave); }
+.cad-uso { font-size: 12px; color: var(--texto-medio); background: var(--fundo); border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.cad-tag-off { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--concluido); background: #E1E7EF; border-radius: 6px; padding: 3px 8px; }
+.cad-ic {
+  width: 40px; height: 40px; flex: 0 0 40px;
+  border-radius: 9px; border: 1px solid var(--borda-forte);
+  background: var(--branco); color: var(--azul);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.cad-ic:hover { background: #EAF0F8; }
+.cad-ic.perigo { color: var(--vermelho); border-color: var(--vermelho-borda); }
+.cad-ic.perigo:hover { background: var(--vermelho-fundo); }
+.cad-ic:disabled { opacity: 0.3; cursor: not-allowed; background: var(--branco); }
+.feriado-data { font-family: var(--fonte-titulo); font-size: 18px; font-weight: 700; color: var(--azul); width: 108px; padding-left: 6px; }
+.feriado-dia { font-size: 13px; color: var(--texto-suave); width: 70px; }
+.cad-item.passado { opacity: 0.6; }
+.cad-passados summary { cursor: pointer; font-weight: 600; color: var(--azul); padding: 6px 0; }
+.cad-passados .cad-lista { margin-top: 8px; }
+.cad-legenda {
+  display: flex; flex-wrap: wrap; gap: 10px 20px;
+  margin-top: 20px; padding: 14px 18px;
+  border-radius: 12px; border: 1px solid var(--borda); background: var(--branco);
+  font-size: 13px; color: var(--texto-medio);
+}
+.cad-legenda strong { color: var(--azul-escuro); }
+.cad-legenda .perigo strong { color: var(--vermelho); }
+
+/* ===================== USUÁRIOS ===================== */
+.usr-layout { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+.usr-tabela-caixa { flex: 3 1 560px; min-width: 0; padding: 0; overflow: hidden; margin-bottom: 0; }
+.usr-form-caixa { flex: 2 1 360px; border: 2px solid var(--azul); margin-bottom: 0; }
+.tabela-rolagem { overflow-x: auto; }
+.tabela { width: 100%; border-collapse: collapse; min-width: 640px; }
+.tabela th {
+  text-align: left; padding: 12px 14px;
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--texto-medio); background: var(--campo); border-bottom: 1px solid var(--borda);
+}
+.tabela td { padding: 12px 14px; border-bottom: 1px solid #E6ECF3; vertical-align: middle; }
+.tabela tr.linha-sel td { background: #EAF0F8; }
+.tabela tr.linha-off td { color: var(--texto-suave); background: var(--concluido-fundo); }
+.voce { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--dourado-texto); margin-left: 4px; }
+.nivel { display: inline-block; border-radius: 999px; padding: 4px 12px; font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+.n-admin { background: var(--azul-escuro); color: var(--dourado-claro); }
+.n-corr { background: var(--azul); color: var(--branco); }
+.n-aux { background: #E6ECF3; color: var(--azul); }
+.sit-ativo { color: var(--verde); font-weight: 600; white-space: nowrap; }
+.sit-off { color: var(--texto-suave); font-weight: 600; white-space: nowrap; }
+.usr-acoes { display: flex; gap: 6px; flex-wrap: nowrap; }
+.botao.pequeno { min-height: 40px; padding: 0 14px; font-size: 14px; }
+.usr-nota { margin: 0; padding: 14px 18px; font-size: 13px; color: var(--texto-suave); border-top: 1px solid #E6ECF3; }
+.usr-form { display: flex; flex-direction: column; gap: 14px; }
+.usr-niveis { display: flex; flex-direction: column; gap: 8px; }
+.usr-nivel {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid var(--borda-forte); border-radius: 12px;
+  background: var(--branco); cursor: pointer;
+  font-weight: 400;
+}
+.usr-nivel input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--azul); }
+.usr-nivel strong { display: block; color: var(--azul-escuro); font-size: 15px; }
+.usr-nivel small { display: block; color: var(--texto-suave); font-size: 13px; margin-top: 2px; }
+.usr-nivel.marcada { border: 2px solid var(--azul); background: #EAF0F8; }
+
 /* ===================== JANELA (dialog) ===================== */
 .janela {
   border: 0;
@@ -706,6 +831,12 @@ a.card-assunto:hover { text-decoration: underline; }
   .form-botoes .botao { flex: 1; }
   .cabecalho-oficio { flex-direction: column; align-items: stretch; padding: 16px; }
   .cabecalho-assunto { font-size: 18px; }
+
+  .cad-abas { flex-wrap: nowrap; overflow-x: auto; }
+  .cad-item { flex-wrap: wrap; }
+  .cad-nome { flex-basis: calc(100% - 60px); }
+  .cad-uso { margin-right: auto; }
+  .feriado-data { width: auto; }
 
   .avisos { right: 16px; left: 16px; bottom: calc(80px + env(safe-area-inset-bottom)); max-width: none; }
   .carregando { top: auto; bottom: calc(84px + env(safe-area-inset-bottom)); }
