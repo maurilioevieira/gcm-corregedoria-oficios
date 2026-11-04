@@ -25,5 +25,5 @@ window.CONFIG = {
   MINUTOS_INATIVIDADE: 20,
 
   NOME_SISTEMA: 'Corregedoria · Controle de Ofícios',
-  VERSAO: '1.0.0 · etapa 6'
+  VERSAO: '1.0.0'
 };

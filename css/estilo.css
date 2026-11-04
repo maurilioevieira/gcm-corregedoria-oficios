@@ -729,6 +729,38 @@ a.card-assunto:hover { text-decoration: underline; }
 .rel-resultado span { font-size: 14px; color: var(--azul-escuro); font-weight: 600; word-break: break-word; }
 .rel-resultado small { font-size: 12px; color: var(--texto-suave); }
 
+/* ===================== ANEXOS E BACKUP ===================== */
+.lista-anexos { display: flex; flex-direction: column; gap: 8px; }
+.anexo { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--borda); border-radius: 12px; }
+.anexo-icone {
+  width: 42px; height: 48px; flex: 0 0 42px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.5px; color: var(--branco);
+}
+.anexo-icone.pdf { background: var(--vermelho); }
+.anexo-icone.img { background: var(--azul); }
+.anexo-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.anexo-info strong { color: var(--azul-escuro); word-break: break-word; font-size: 14px; }
+.anexo-info small { color: var(--texto-suave); font-size: 12px; }
+.anexo-botao { align-self: flex-start; margin-top: 4px; }
+.anexo-escolher {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 110px; padding: 18px;
+  border: 2px dashed var(--borda-forte); border-radius: 14px;
+  background: var(--campo); text-align: center; cursor: pointer;
+  color: var(--texto-medio); font-weight: 500;
+}
+.anexo-escolher:hover { border-color: var(--azul); }
+.anexo-escolher input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.anexo-escolher:focus-within { outline: 3px solid var(--dourado); outline-offset: 2px; }
+.lt-anexo::before { background: var(--azul-medio); }
+.usr-backup { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-top: 20px; }
+.usr-backup > div { flex: 1 1 420px; }
+.usr-backup p { margin: 0; }
+.chave-backup { font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace !important; font-size: 13px !important; }
+code { font-family: ui-monospace, Consolas, monospace; background: var(--fundo); padding: 1px 6px; border-radius: 4px; font-size: 0.92em; }
+
 /* ===================== JANELA (dialog) ===================== */
 .janela {
   border: 0;
@@ -742,6 +774,9 @@ a.card-assunto:hover { text-decoration: underline; }
 .janela-titulo { margin: 0; font-family: var(--fonte-titulo); font-size: 24px; color: var(--azul-escuro); }
 .janela-corpo p { margin: 0; }
 .janela-botoes { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+.janela-subtitulo { margin: 4px 0 0; font-family: var(--fonte-titulo); font-size: 18px; color: var(--azul-escuro); }
+.instalar-caixa { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; background: #EAF0F8; font-size: 14px; color: var(--azul-escuro); }
+.instalar-caixa span { flex: 1 1 200px; }
 .janela-erro { margin: 0; min-height: 0; color: var(--vermelho); font-weight: 600; font-size: 14px; }
 .janela-erro:empty { display: none; }
 .janela-grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }

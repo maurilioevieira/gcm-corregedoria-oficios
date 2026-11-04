@@ -438,6 +438,34 @@ window.App = (function () {
     }
   }
 
+  // ===================== APLICATIVO INSTALÁVEL (PWA) =====================
+  // O service worker (sw.js) permite instalar o sistema como aplicativo.
+  // O botão "Instalar aplicativo" aparece em Minha conta quando o
+  // navegador oferece a instalação (Chrome, Edge, Android).
+  let pedidoInstalacao = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    pedidoInstalacao = e;
+    const caixa = document.getElementById('instalar-caixa');
+    if (caixa) caixa.hidden = false;
+  });
+  window.addEventListener('appinstalled', function () {
+    pedidoInstalacao = null;
+    const caixa = document.getElementById('instalar-caixa');
+    if (caixa) caixa.hidden = true;
+    avisar('Aplicativo instalado.', 'sucesso');
+  });
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('#botao-instalar') || !pedidoInstalacao) return;
+    pedidoInstalacao.prompt();
+    pedidoInstalacao.userChoice.finally(function () { pedidoInstalacao = null; $('#instalar-caixa').hidden = true; });
+  });
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () { /* sem PWA, o site funciona igual */ });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', iniciar);
 
   // O que as páginas das próximas etapas poderão usar:

@@ -105,7 +105,13 @@
         '<div class="usr-layout">' +
           htmlTabela(usuarios, editando && editando.id, meuId) +
           (editando ? htmlFormulario(editando) : '') +
-        '</div>';
+        '</div>' +
+        '<section class="cartao usr-backup">' +
+          '<div><h2 class="cartao-titulo">Backup automático</h2>' +
+          '<p class="texto-suave">A cópia semanal dos dados (GitHub Actions) usa uma <strong>chave de backup</strong> própria, que só permite ler e exportar. ' +
+          'Gere a chave e cole no segredo <code>BACKUP_TOKEN</code> do repositório de backup. Gerar uma nova chave invalida a anterior.</p></div>' +
+          '<button type="button" class="botao secundario" data-chave-backup>Gerar chave de backup</button>' +
+        '</section>';
 
       if (editando) {
         const form = raiz.querySelector('#form-usuario');
@@ -167,7 +173,33 @@
       if (ctx.ativa()) desenhar();
     }
 
+    async function gerarChave() {
+      const ok = await Comp.confirmar('Gerar chave de backup',
+        'Uma chave nova será criada e a anterior deixará de funcionar. Depois de gerar, atualize o segredo BACKUP_TOKEN no GitHub.', 'Gerar chave');
+      if (!ok) return;
+      let r;
+      try { r = await U.comCarregando(function () { return API.gerarChaveBackup(); }); } catch (e) { return; }
+      await Comp.janela({
+        titulo: 'Chave de backup gerada',
+        texto: 'Copie agora: por segurança, esta chave não será exibida de novo.',
+        corpo: '<label class="campo">Chave<input name="chave" readonly value="' + esc(r.chave) + '" class="chave-backup"></label>' +
+               '<button type="button" class="botao azul" data-copiar>Copiar chave</button>',
+        botaoOk: 'Já copiei',
+        aoAbrir: function (form) {
+          const campo = form.querySelector('.chave-backup');
+          campo.addEventListener('focus', function () { campo.select(); });
+          form.querySelector('[data-copiar]').addEventListener('click', function () {
+            campo.select();
+            (navigator.clipboard ? navigator.clipboard.writeText(campo.value) : Promise.reject())
+              .then(function () { U.avisar('Chave copiada.', 'sucesso'); })
+              .catch(function () { document.execCommand('copy'); U.avisar('Chave copiada.', 'sucesso'); });
+          });
+        }
+      });
+    }
+
     raiz.addEventListener('click', function (e) {
+      if (e.target.closest('[data-chave-backup]')) { gerarChave(); return; }
       if (e.target.closest('[data-novo]')) { editando = { nivel: 'auxiliar', ativo: true }; desenhar(); return; }
       if (e.target.closest('[data-cancelar]')) { editando = null; desenhar(); return; }
       const ed = e.target.closest('[data-editar]');

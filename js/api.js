@@ -191,6 +191,25 @@ window.API = (function () {
     },
     relatorioConsolidado: function (de, ate) {
       return chamar('relatorio_consolidado', { p_de: de, p_ate: ate });
+    },
+
+    // ---------- Anexos (Etapa 7) ----------
+    anexarArquivo: function (oficioId, tipo, nome, mime, base64) {
+      return chamar('anexar_arquivo', { p_oficio: oficioId, p_tipo: tipo, p_nome: nome, p_mime: mime, p_base64: base64 });
+    },
+    listarAnexos: function (oficioId) {
+      return chamar('listar_anexos', { p_oficio: oficioId });
+    },
+    baixarAnexo: function (id) {
+      return chamar('baixar_anexo', { p_id: id });
+    },
+    excluirAnexo: function (id) {
+      return chamar('excluir_anexo', { p_id: id });
+    },
+
+    // ---------- Backup (Etapa 7) ----------
+    gerarChaveBackup: function () {
+      return chamar('gerar_chave_backup');
     }
   };
 })();

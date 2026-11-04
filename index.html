@@ -8,6 +8,13 @@
   <title>Corregedoria · Controle de Ofícios · GCM Iguatu</title>
 
   <link rel="icon" type="image/png" href="img/brasao.png">
+  <!-- Instalação como aplicativo (celular e computador) -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Corregedoria">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -111,6 +118,11 @@
     <form method="dialog" id="form-trocar-pin" class="janela-corpo">
       <h2 id="janela-conta-titulo" class="janela-titulo">Minha conta</h2>
       <p class="texto-suave" id="conta-resumo"></p>
+      <div class="instalar-caixa" id="instalar-caixa" hidden>
+        <span>Use o sistema como aplicativo, com ícone na tela inicial.</span>
+        <button type="button" class="botao azul pequeno" id="botao-instalar">Instalar aplicativo</button>
+      </div>
+      <h3 class="janela-subtitulo">Trocar PIN</h3>
       <label class="campo">PIN atual
         <input type="password" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="current-password" id="pin-atual" required>
       </label>

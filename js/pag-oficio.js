@@ -3,6 +3,7 @@
    js/pag-oficio.js · Detalhe do ofício (#oficio/id)
    ------------------------------------------------------------
    Mostra todos os dados, a resposta (se houver) e a linha do tempo.
+   Anexos: PDF/JPG/PNG de até 4 MB (ofício recebido, resposta, outro).
    Ações, conforme o nível e a situação:
      • Editar               → quem pode editar (regra igual à do banco)
      • Registrar resposta   → ofício em aberto (abre direto se o
@@ -29,7 +30,8 @@
 
   const ICONE_HIST = {
     'Cadastrado': 'novo', 'Editado': 'editar', 'Respondido': 'ok', 'Arquivado': 'arquivo',
-    'Reaberto': 'reabrir', 'Excluído': 'excluir'
+    'Reaberto': 'reabrir', 'Excluído': 'excluir',
+    'Anexo incluído': 'anexo', 'Anexo removido': 'excluir'
   };
 
   function htmlHistorico(h) {
@@ -96,21 +98,142 @@
     return v ? v.motivo : null;
   }
 
+  // ===================== ANEXOS =====================
+  const TIPOS_ANEXO = { oficio: 'Ofício recebido', resposta: 'Resposta enviada', outro: 'Outro documento' };
+  const LIMITE_BYTES = 4 * 1024 * 1024;
+
+  function tamanhoTexto(b) {
+    if (b < 1024) return b + ' B';
+    if (b < 1024 * 1024) return Math.round(b / 1024) + ' KB';
+    return (b / 1024 / 1024).toFixed(1).replace('.', ',') + ' MB';
+  }
+
+  function htmlAnexos(r, podeAnexar, u) {
+    if (r.oculto) {
+      return '<p class="texto-suave">' + (r.quantidade ? r.quantidade + ' anexo(s) · ' : '') + 'Os anexos de ofícios sigilosos são visíveis somente para a Corregedoria.</p>';
+    }
+    const podeGerir = u.nivel === 'admin' || u.nivel === 'corregedor';
+    const lista = (r.anexos || []).map(function (a) {
+      const podeExcluir = podeGerir || a.enviado_por === u.id;
+      return '<div class="anexo" data-anexo="' + esc(a.id) + '">' +
+        '<div class="anexo-icone ' + (a.mime === 'application/pdf' ? 'pdf' : 'img') + '" aria-hidden="true">' + (a.mime === 'application/pdf' ? 'PDF' : 'IMG') + '</div>' +
+        '<div class="anexo-info"><strong>' + esc(a.nome) + '</strong>' +
+          '<small>' + esc(TIPOS_ANEXO[a.tipo] || a.tipo) + ' · ' + esc(tamanhoTexto(a.tamanho)) + ' · ' +
+          esc(a.enviado_por_nome || '—') + ', ' + esc(U.dataHoraBR(a.enviado_em)) + '</small></div>' +
+        '<button type="button" class="botao secundario pequeno" data-acao="abrir-anexo">Abrir</button>' +
+        (podeExcluir ? '<button type="button" class="cad-ic perigo" data-acao="excluir-anexo" aria-label="Excluir anexo ' + esc(a.nome) + '" title="Excluir">' +
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg></button>' : '') +
+      '</div>';
+    }).join('');
+    return (lista || '<p class="texto-suave">Nenhum arquivo anexado.</p>') +
+      (podeAnexar ? '<button type="button" class="botao secundario anexo-botao" data-acao="anexar">' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.4 11.1l-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg>' +
+        'Anexar arquivo</button>' : '');
+  }
+
+  function lerArquivoBase64(arquivo) {
+    return new Promise(function (ok, falha) {
+      const leitor = new FileReader();
+      leitor.onload = function () { ok(String(leitor.result).split(',')[1] || ''); };
+      leitor.onerror = function () { falha(new Error('Não foi possível ler o arquivo.')); };
+      leitor.readAsDataURL(arquivo);
+    });
+  }
+
+  function mimeDoArquivo(arquivo) {
+    const nome = arquivo.name.toLowerCase();
+    if (arquivo.type === 'application/pdf' || nome.endsWith('.pdf')) return 'application/pdf';
+    if (arquivo.type === 'image/png' || nome.endsWith('.png')) return 'image/png';
+    if (arquivo.type === 'image/jpeg' || /\.jpe?g$/.test(nome)) return 'image/jpeg';
+    return null;
+  }
+
+  async function anexar(o) {
+    let arquivoEscolhido = null;
+    const v = await Comp.janela({
+      titulo: 'Anexar arquivo ao ofício nº ' + o.numero_oficio,
+      corpo:
+        '<div class="opcoes-cartao" role="radiogroup" aria-label="Tipo de documento">' +
+          '<label class="opcao-cartao marcada"><input type="radio" name="tipo" value="oficio" checked><span>Ofício recebido</span></label>' +
+          '<label class="opcao-cartao"><input type="radio" name="tipo" value="resposta"><span>Resposta enviada</span></label>' +
+          '<label class="opcao-cartao"><input type="radio" name="tipo" value="outro"><span>Outro</span></label>' +
+        '</div>' +
+        '<label class="anexo-escolher"><input type="file" name="arquivo" accept="application/pdf,image/jpeg,image/png,.pdf,.jpg,.jpeg,.png">' +
+          '<span class="anexo-escolher-texto">Clique para escolher o arquivo<br><small>PDF, JPG ou PNG · até 4 MB</small></span></label>',
+      botaoOk: 'Anexar',
+      aoAbrir: function (form) {
+        form.querySelectorAll('input[name="tipo"]').forEach(function (r) {
+          r.addEventListener('change', function () {
+            form.querySelectorAll('.opcao-cartao').forEach(function (c) { c.classList.toggle('marcada', c.querySelector('input').checked); });
+          });
+        });
+        const campo = form.querySelector('input[name="arquivo"]');
+        campo.addEventListener('change', function () {
+          arquivoEscolhido = campo.files[0] || null;
+          form.querySelector('.anexo-escolher-texto').innerHTML = arquivoEscolhido
+            ? '<strong>' + esc(arquivoEscolhido.name) + '</strong><br><small>' + esc(tamanhoTexto(arquivoEscolhido.size)) + '</small>'
+            : 'Clique para escolher o arquivo<br><small>PDF, JPG ou PNG · até 4 MB</small>';
+        });
+      },
+      validar: function () {
+        if (!arquivoEscolhido) return 'Escolha um arquivo.';
+        if (!mimeDoArquivo(arquivoEscolhido)) return 'Formato não aceito. Envie PDF, JPG ou PNG.';
+        if (arquivoEscolhido.size > LIMITE_BYTES) return 'Arquivo maior que 4 MB. Digitalize com resolução menor ou comprima o PDF.';
+        return '';
+      }
+    });
+    if (!v || !arquivoEscolhido) return false;
+    await U.comCarregando(async function () {
+      const base64 = await lerArquivoBase64(arquivoEscolhido);
+      await API.anexarArquivo(o.id, v.tipo, arquivoEscolhido.name, mimeDoArquivo(arquivoEscolhido), base64);
+    });
+    U.avisar('Arquivo anexado.', 'sucesso');
+    return true;
+  }
+
+  // Abre o anexo numa nova aba (computador) ou baixa (celular).
+  // A aba é aberta ANTES de buscar o arquivo: abrir depois de uma
+  // espera faz o navegador bloquear como se fosse propaganda.
+  async function abrirAnexo(id) {
+    const celular = window.innerWidth < 900;
+    const aba = celular ? null : window.open('', '_blank');
+    try {
+      const r = await U.comCarregando(function () { return API.baixarAnexo(id); });
+      const bin = atob(r.base64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const url = URL.createObjectURL(new Blob([bytes], { type: r.mime }));
+      if (aba) {
+        aba.location.href = url;
+      } else {
+        const a = document.createElement('a');
+        a.href = url; a.download = r.nome;
+        document.body.appendChild(a); a.click(); a.remove();
+      }
+      setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+    } catch (e) {
+      if (aba) aba.close();
+    }
+  }
+
   // ===================== PÁGINA =====================
   async function renderizar(conteudo, ctx) {
     const partes = String(ctx.parametro || '').split('/');
     const id = partes[0];
     const abrirResposta = partes[1] === 'responder';
 
-    const r = await U.comCarregando(function () { return API.obterOficio(id); });
+    const resp = await U.comCarregando(function () { return Promise.all([API.obterOficio(id), API.listarAnexos(id)]); });
     if (!ctx.ativa()) return;
 
+    const r = resp[0];
+    const anexos = resp[1];
     const o = r.oficio;
     const u = ctx.usuario;
     const podeGerir = u.nivel === 'admin' || u.nivel === 'corregedor';
     const aberto = o.situacao === 'aberto';
     const podeEditar = !o.mascarado && (podeGerir || (aberto && !o.sigiloso));
     const podeConcluir = aberto && !o.mascarado && (podeGerir || !o.sigiloso);
+    const podeAnexar = !o.mascarado && (podeGerir || !o.sigiloso);
 
     const acoes =
       (podeConcluir ? '<button type="button" class="botao primario" data-acao="concluir">Registrar resposta</button>' : '') +
@@ -202,6 +325,7 @@
               '<p class="texto-livre">' + esc(o.observacoes || '—') + '</p></section>') +
         '</div>' +
         '<div class="detalhe-coluna">' +
+          '<section class="cartao"><h2 class="cartao-titulo">Anexos</h2><div id="lista-anexos" class="lista-anexos">' + htmlAnexos(anexos, podeAnexar, u) + '</div></section>' +
           '<section class="cartao"><h2 class="cartao-titulo">Linha do tempo</h2>' + htmlHistorico(r.historico) + '</section>' +
           '<p class="texto-suave rodape-detalhe">Cadastrado por ' + esc(o.criado_por_nome || '—') + ' em ' + esc(U.dataHoraBR(o.criado_em)) +
             (o.atualizado_em ? ' · última alteração em ' + esc(U.dataHoraBR(o.atualizado_em)) : '') + '</p>' +
@@ -214,7 +338,18 @@
       if (!botao) return;
       const acao = botao.getAttribute('data-acao');
       try {
-        if (acao === 'ficha') {
+        if (acao === 'anexar') {
+          if (await anexar(o)) App.navegar();
+        } else if (acao === 'abrir-anexo') {
+          await abrirAnexo(botao.closest('[data-anexo]').getAttribute('data-anexo'));
+        } else if (acao === 'excluir-anexo') {
+          const linhaAnexo = botao.closest('[data-anexo]');
+          const nome = linhaAnexo.querySelector('strong').textContent;
+          if (!(await Comp.confirmar('Excluir anexo', 'Excluir o arquivo "' + nome + '"? A exclusão fica registrada na linha do tempo.', 'Excluir', true))) return;
+          await U.comCarregando(function () { return API.excluirAnexo(linhaAnexo.getAttribute('data-anexo')); });
+          U.avisar('Anexo excluído.', 'sucesso');
+          App.navegar();
+        } else if (acao === 'ficha') {
           await U.comCarregando(function () { return PDF.ficha(o, r.historico, null); });
           U.avisar('Ficha gerada. Confira seus downloads.', 'sucesso');
         } else if (acao === 'concluir') {

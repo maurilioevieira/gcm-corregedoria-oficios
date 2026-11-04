@@ -18,6 +18,8 @@ js/pag-*.js       Páginas do sistema (a partir da Etapa 3)
 img/brasao.png    Brasão da GCM (logo, ícone da aba e timbre dos PDFs)
 img/logo-prefeitura.png  Logo da Prefeitura (timbre dos PDFs)
 js/pdf.js         Relatórios em PDF e planilha CSV
+sw.js             Service worker (instalação como aplicativo)
+manifest.webmanifest  Nome, cores e ícones do aplicativo
 ```
 
 ## Segurança
@@ -37,4 +39,4 @@ js/pdf.js         Relatórios em PDF e planilha CSV
 4. Cadastro e edição de ofícios, detalhe, histórico e registro de resposta ✅
 5. Cadastros (listas suspensas) e usuários ✅
 6. Relatórios em PDF ✅
-7. Anexos, backup semanal e instalação como aplicativo (PWA)
+7. Anexos, backup semanal e instalação como aplicativo (PWA) ✅

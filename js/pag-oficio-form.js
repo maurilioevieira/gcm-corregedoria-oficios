@@ -131,7 +131,7 @@
           '<legend>5 · Observações internas</legend>' +
           '<label class="campo"><span class="sr-only">Observações</span>' +
             '<textarea name="observacoes" rows="2" maxlength="4000" placeholder="Anotações da equipe (não saem no relatório)">' + esc(o.observacoes) + '</textarea></label>' +
-          '<p class="dica">O anexo do ofício digitalizado (PDF) será incluído numa etapa futura.</p>' +
+          '<p class="dica">Depois de salvar, anexe o ofício digitalizado (PDF ou foto) na tela do ofício, em "Anexos".</p>' +
         '</fieldset>' +
 
         '<div class="form-botoes">' +
