@@ -11,6 +11,8 @@
 
    A regra das cores vem PRONTA do banco (campo "faixa"). Assim o
    painel, a lista e os relatórios nunca discordam entre si.
+   O card de cada ofício é desenhado por Comp.htmlCard (componentes.js),
+   o mesmo usado na aba Arquivo.
    ============================================================ */
 
 (function () {
@@ -73,17 +75,6 @@
       weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC'
     });
     return texto.charAt(0).toUpperCase() + texto.slice(1);
-  }
-
-  // ---------- Texto do selo de prazo ----------
-  function seloPrazo(o) {
-    if (o.situacao === 'respondido') return 'Respondido ' + U.dataCurtaBR(o.resposta_data);
-    if (o.situacao === 'arquivado') return 'Arquivado ' + U.dataCurtaBR(o.resposta_data);
-    const d = Number(o.dias_restantes);
-    if (d < 0) return 'Vencido há ' + Math.abs(d) + (d === -1 ? ' dia' : ' dias');
-    if (d === 0) return 'Vence hoje';
-    if (d === 1) return 'Vence amanhã';
-    return d + ' dias';
   }
 
   // ---------- Montagem do filtro enviado ao banco ----------
@@ -183,47 +174,6 @@
     );
   }
 
-  function htmlCard(o) {
-    const aberto = o.situacao === 'aberto';
-    const origem = o.origem_nome + (o.orgao_nome ? ' · ' + o.orgao_nome : '');
-    const selos =
-      (o.urgente ? '<span class="selo selo-urgente">Urgente</span>' : '') +
-      (o.sigiloso ? '<span class="selo selo-sigilo">' +
-        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Sigiloso</span>' : '');
-
-    return (
-      '<article class="card-oficio t-' + esc(o.faixa) + '">' +
-        '<div class="card-prazo">' +
-          '<span class="pilula p-' + esc(o.faixa) + '">' + esc(seloPrazo(o)) + '</span>' +
-          '<span class="card-prazo-data">prazo ' + esc(U.dataBR(o.data_limite)) + '</span>' +
-        '</div>' +
-        '<div class="card-corpo">' +
-          '<div class="card-linha-topo">' +
-            '<span class="card-numero">Ofício nº ' + esc(o.numero_oficio) + '</span>' +
-            (o.procedimento ? '<span class="card-proc">' + esc(o.procedimento) + '</span>' : '') +
-            selos +
-          '</div>' +
-          '<a class="card-assunto" href="#oficio/' + esc(o.id) + '">' + esc(o.assunto) + '</a>' +
-          '<div class="card-meta">' +
-            '<span><strong>Origem:</strong> ' + esc(origem) + '</span>' +
-            '<span><strong>Recebido:</strong> ' + esc(U.dataBR(o.data_recebimento)) +
-              (o.recebido_por_nome ? ' por ' + esc(o.recebido_por_nome) : '') + '</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="card-destino">' +
-          '<span class="card-destino-rotulo">Destino</span>' +
-          '<span class="etiqueta-destino">' + esc(o.destino_nome) + '</span>' +
-        '</div>' +
-        '<div class="card-acoes">' +
-          '<a class="botao secundario" href="#oficio/' + esc(o.id) + '">Abrir</a>' +
-          (aberto && !o.mascarado
-            ? '<a class="botao azul" href="#oficio/' + esc(o.id) + '/responder">Registrar resposta</a>'
-            : '') +
-        '</div>' +
-      '</article>'
-    );
-  }
-
   function htmlLista(oficios) {
     const legenda =
       '<div class="legenda">' +
@@ -254,7 +204,7 @@
         '</div>';
     }
 
-    return cabecalho + '<div class="lista-oficios">' + oficios.map(htmlCard).join('') + '</div>';
+    return cabecalho + '<div class="lista-oficios">' + oficios.map(function (o) { return Comp.htmlCard(o); }).join('') + '</div>';
   }
 
   // ===================== PÁGINA =====================
@@ -383,31 +333,4 @@
 
   App.registrarPagina('painel', renderizar);
 
-  // ------------------------------------------------------------
-  // Página provisória do detalhe do ofício (#oficio/id).
-  // Mostra os dados principais até a Etapa 4 entregar a tela
-  // completa (que substitui este registro automaticamente).
-  // ------------------------------------------------------------
-  async function detalheProvisorio(conteudo, ctx) {
-    const id = String(ctx.parametro || '').split('/')[0];
-    const r = await U.comCarregando(function () { return API.obterOficio(id); });
-    if (!ctx.ativa()) return;
-    const o = r.oficio;
-    conteudo.innerHTML =
-      '<header class="pagina-topo"><div>' +
-        '<a href="#painel" class="link-voltar">← Voltar ao painel</a>' +
-        '<h1 class="pagina-titulo">Ofício nº ' + esc(o.numero_oficio) + '</h1>' +
-      '</div></header>' +
-      '<div class="card-oficio t-' + esc(o.faixa) + '" style="margin-bottom:20px">' +
-        '<div class="card-prazo"><span class="pilula p-' + esc(o.faixa) + '">' + esc(seloPrazo(o)) + '</span>' +
-        '<span class="card-prazo-data">prazo ' + esc(U.dataBR(o.data_limite)) + '</span></div>' +
-        '<div class="card-corpo"><div class="card-assunto">' + esc(o.assunto) + '</div>' +
-        '<div class="card-meta"><span><strong>Origem:</strong> ' + esc(o.origem_nome) + '</span>' +
-        '<span><strong>Destino:</strong> ' + esc(o.destino_nome) + '</span></div></div>' +
-      '</div>' +
-      '<div class="estado-vazio"><h2>Tela de detalhe em construção</h2>' +
-        '<p>O detalhe completo, a edição, o histórico e o registro de resposta chegam na <strong>Etapa 4</strong>.</p></div>';
-  }
-  detalheProvisorio.titulo = 'Ofício';
-  App.registrarPagina('oficio', detalheProvisorio);
 })();
