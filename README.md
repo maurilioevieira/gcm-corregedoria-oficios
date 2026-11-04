@@ -15,7 +15,9 @@ js/config.js      URL e chave pública do Supabase
 js/api.js         Única camada que conversa com o banco
 js/app.js         Login, sessão, menus por nível e navegação
 js/pag-*.js       Páginas do sistema (a partir da Etapa 3)
-img/brasao.png    Brasão da GCM (logo e ícone da aba)
+img/brasao.png    Brasão da GCM (logo, ícone da aba e timbre dos PDFs)
+img/logo-prefeitura.png  Logo da Prefeitura (timbre dos PDFs)
+js/pdf.js         Relatórios em PDF e planilha CSV
 ```
 
 ## Segurança
@@ -31,8 +33,8 @@ img/brasao.png    Brasão da GCM (logo e ícone da aba)
 
 1. Banco de dados ✅
 2. Base do site: login, layout e conexão ✅
-3. Painel com totais e cards coloridos por prazo
-4. Cadastro e edição de ofícios, detalhe, histórico e registro de resposta
-5. Cadastros (listas suspensas) e usuários
-6. Relatórios em PDF
+3. Painel com totais e cards coloridos por prazo ✅
+4. Cadastro e edição de ofícios, detalhe, histórico e registro de resposta ✅
+5. Cadastros (listas suspensas) e usuários ✅
+6. Relatórios em PDF ✅
 7. Anexos, backup semanal e instalação como aplicativo (PWA)

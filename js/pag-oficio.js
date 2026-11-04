@@ -116,6 +116,7 @@
       (podeConcluir ? '<button type="button" class="botao primario" data-acao="concluir">Registrar resposta</button>' : '') +
       (podeEditar ? '<a class="botao secundario" href="#editar/' + esc(o.id) + '">Editar</a>' : '') +
       (!aberto && podeGerir ? '<button type="button" class="botao secundario" data-acao="reabrir">Reabrir</button>' : '') +
+      '<button type="button" class="botao secundario" data-acao="ficha">Imprimir ficha</button>' +
       (podeGerir ? '<button type="button" class="botao perigo" data-acao="excluir">Excluir</button>' : '');
 
     const origem = o.origem_nome + (o.orgao_nome ? ' · ' + o.orgao_nome : '');
@@ -213,7 +214,10 @@
       if (!botao) return;
       const acao = botao.getAttribute('data-acao');
       try {
-        if (acao === 'concluir') {
+        if (acao === 'ficha') {
+          await U.comCarregando(function () { return PDF.ficha(o, r.historico, null); });
+          U.avisar('Ficha gerada. Confira seus downloads.', 'sucesso');
+        } else if (acao === 'concluir') {
           if (await registrarResposta(o)) App.navegar();
         } else if (acao === 'reabrir') {
           const motivo = await pedirMotivo('Reabrir ofício nº ' + o.numero_oficio,
